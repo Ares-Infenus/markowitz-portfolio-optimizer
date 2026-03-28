@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System dependencies for cvxpy solvers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libopenblas-dev \
+    tzdata \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV TZ=America/New_York
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ ./src/
+COPY .env.example .env
+
+ENV PYTHONPATH=/app
+
+# Non-root user
+RUN useradd -m -u 1000 optimizer
+RUN mkdir -p data/raw data/processed data/results logs \
+    && chown -R optimizer:optimizer /app
+USER optimizer
+
+CMD ["python", "src/pipeline/run_pipeline.py"]

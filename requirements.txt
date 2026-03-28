@@ -1,0 +1,11 @@
+yfinance>=0.2.50
+pyarrow>=15.0.0
+cvxpy>=1.5.0
+scipy>=1.14.0
+PyPortfolioOpt>=1.5.5
+scikit-learn>=1.5.2
+streamlit>=1.35.0
+plotly>=5.22.0
+pandas>=2.2.2
+numpy>=1.26.4
+python-dotenv>=1.0.1

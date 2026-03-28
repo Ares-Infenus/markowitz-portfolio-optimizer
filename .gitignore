@@ -1,0 +1,36 @@
+# Environment
+.env
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Data (auto-generated)
+data/raw/
+data/processed/
+data/results/
+
+# Logs
+logs/
+
+# Testing
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

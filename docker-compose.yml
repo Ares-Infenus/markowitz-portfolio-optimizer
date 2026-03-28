@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  optimizer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.optimizer
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: python src/pipeline/run_pipeline.py
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dashboard
+    env_file: .env
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      optimizer:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

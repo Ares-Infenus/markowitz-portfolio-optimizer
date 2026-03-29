@@ -1,4 +1,5 @@
 """PerformanceAnalytics — computes all risk/return metrics from backtest results."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -61,7 +62,11 @@ class PerformanceAnalytics:
         max_dd = self._max_drawdown(df["portfolio_value"])
 
         cvar_threshold = returns.quantile(0.05)
-        cvar_95 = float(returns[returns < cvar_threshold].mean()) if (returns < cvar_threshold).any() else float(cvar_threshold)
+        cvar_95 = (
+            float(returns[returns < cvar_threshold].mean())
+            if (returns < cvar_threshold).any()
+            else float(cvar_threshold)
+        )
 
         calmar = float(ann_return / abs(max_dd)) if max_dd != 0 else 0.0
 
@@ -94,9 +99,7 @@ class PerformanceAnalytics:
         records = []
         portfolio_value = 1.0
 
-        for i, (date, next_date) in enumerate(
-            zip(monthly_dates, monthly_dates[1:] + [None])
-        ):
+        for i, (date, next_date) in enumerate(zip(monthly_dates, monthly_dates[1:] + [None])):
             if next_date is not None:
                 period = returns.loc[(returns.index > date) & (returns.index <= next_date)]
             else:

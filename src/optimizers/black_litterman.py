@@ -1,4 +1,5 @@
 """Black-Litterman optimizer — PyPortfolioOpt + momentum-driven views."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -98,21 +99,21 @@ class BlackLittermanOptimizer(BaseOptimizer):
         top3 = ranked.nlargest(3).index.tolist()
         bot3 = ranked.nsmallest(3).index.tolist()
 
-        views_list = []   # (P_row, q_scalar)
+        views_list = []  # (P_row, q_scalar)
         for t in top3:
             row = np.zeros(n)
             row[tickers.index(t)] = 1.0
-            q = float(Pi[t]) + 0.02   # +2% above equilibrium
+            q = float(Pi[t]) + 0.02  # +2% above equilibrium
             views_list.append((row, q))
 
         for t in bot3:
             row = np.zeros(n)
             row[tickers.index(t)] = 1.0
-            q = float(Pi[t]) - 0.01   # -1% below equilibrium
+            q = float(Pi[t]) - 0.01  # -1% below equilibrium
             views_list.append((row, q))
 
         P = np.vstack([v[0] for v in views_list])  # (K, N)
-        Q = np.array([v[1] for v in views_list])    # (K,)
+        Q = np.array([v[1] for v in views_list])  # (K,)
 
         # Diagonal uncertainty: proportional to variance of each view asset
         Sigma_arr = np.diag(returns.var().values * 252)

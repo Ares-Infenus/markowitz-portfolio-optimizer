@@ -1,4 +1,5 @@
 """DataIngestion — downloads adjusted close prices via yfinance with retry + local cache."""
+
 from __future__ import annotations
 
 import time
@@ -29,7 +30,9 @@ class DataIngestion:
             if not prices.empty:
                 self.logger.info(
                     "Cache hit — loaded %d rows x %d tickers from %s",
-                    len(prices), prices.shape[1], PRICES_PATH,
+                    len(prices),
+                    prices.shape[1],
+                    PRICES_PATH,
                 )
                 return prices
             self.logger.warning("Cached prices.parquet is empty — deleting and re-downloading")
@@ -45,9 +48,7 @@ class DataIngestion:
         start = self.settings.start_date
         end = self.settings.end_date
 
-        self.logger.info(
-            "Downloading prices — tickers=%s  period=%s→%s", tickers, start, end
-        )
+        self.logger.info("Downloading prices — tickers=%s  period=%s→%s", tickers, start, end)
 
         raw = self._download_with_retry(tickers, start, end)
         prices = self._clean(raw, tickers)
@@ -133,16 +134,12 @@ class DataIngestion:
         # Ensure expected tickers are present
         missing = [t for t in tickers if t not in df.columns]
         if missing:
-            self.logger.error(
-                "Tickers not found in download, excluding: %s", missing
-            )
+            self.logger.error("Tickers not found in download, excluding: %s", missing)
             df = df[[c for c in tickers if c in df.columns]]
 
         # Forward-fill gaps ≤ 5 days; warn on longer gaps
         for col in df.columns:
-            consec_nan = df[col].isna().astype(int).groupby(
-                (~df[col].isna()).cumsum()
-            ).cumsum()
+            consec_nan = df[col].isna().astype(int).groupby((~df[col].isna()).cumsum()).cumsum()
             long_gaps = consec_nan[consec_nan > 5]
             if not long_gaps.empty:
                 self.logger.warning(

@@ -1,4 +1,5 @@
 """Shared fixtures for all tests — deterministic synthetic data."""
+
 from __future__ import annotations
 
 import numpy as np

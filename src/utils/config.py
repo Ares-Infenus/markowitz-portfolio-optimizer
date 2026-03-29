@@ -1,4 +1,5 @@
 """Typed configuration dataclass loaded from environment variables."""
+
 from __future__ import annotations
 
 import os
@@ -25,12 +26,8 @@ class Settings:
     # ── Optimization Constraints ──────────────────────────────
     max_weight: float = field(default_factory=lambda: float(os.getenv("MAX_WEIGHT", "0.20")))
     min_weight: float = field(default_factory=lambda: float(os.getenv("MIN_WEIGHT", "0.02")))
-    sector_limit: float = field(
-        default_factory=lambda: float(os.getenv("SECTOR_LIMIT", "0.40"))
-    )
-    max_turnover: float = field(
-        default_factory=lambda: float(os.getenv("MAX_TURNOVER", "0.15"))
-    )
+    sector_limit: float = field(default_factory=lambda: float(os.getenv("SECTOR_LIMIT", "0.40")))
+    max_turnover: float = field(default_factory=lambda: float(os.getenv("MAX_TURNOVER", "0.15")))
     transaction_cost: float = field(
         default_factory=lambda: float(os.getenv("TRANSACTION_COST", "0.001"))
     )
@@ -48,15 +45,11 @@ class Settings:
     bl_tau: float = field(default_factory=lambda: float(os.getenv("BL_TAU", "0.05")))
 
     # ── Dashboard ─────────────────────────────────────────────
-    streamlit_port: int = field(
-        default_factory=lambda: int(os.getenv("STREAMLIT_PORT", "8501"))
-    )
+    streamlit_port: int = field(default_factory=lambda: int(os.getenv("STREAMLIT_PORT", "8501")))
 
     # ── Logging ───────────────────────────────────────────────
     log_level: str = field(default_factory=lambda: os.getenv("LOG_LEVEL", "INFO"))
-    log_dir: Path = field(
-        default_factory=lambda: Path(os.getenv("LOG_DIR", "logs/"))
-    )
+    log_dir: Path = field(default_factory=lambda: Path(os.getenv("LOG_DIR", "logs/")))
 
     # ── Sector map ────────────────────────────────────────────
     sector_map: dict = field(

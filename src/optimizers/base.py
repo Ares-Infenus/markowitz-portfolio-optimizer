@@ -1,4 +1,5 @@
 """BaseOptimizer — Strategy Pattern ABC for all portfolio optimizers."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

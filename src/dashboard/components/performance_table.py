@@ -1,4 +1,5 @@
 """Performance comparison table — real green/red per-column highlighting."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,41 +11,41 @@ import streamlit as st
 _PERF_PATH = Path("data/results/performance_summary.parquet")
 
 _COLS = {
-    "method":           "Strategy",
-    "annualized_return":"Ann. Return",
-    "annualized_vol":   "Ann. Vol",
-    "sharpe_ratio":     "Sharpe",
-    "sortino_ratio":    "Sortino",
-    "max_drawdown":     "Max DD",
-    "cvar_95":          "CVaR 95%",
-    "calmar_ratio":     "Calmar",
+    "method": "Strategy",
+    "annualized_return": "Ann. Return",
+    "annualized_vol": "Ann. Vol",
+    "sharpe_ratio": "Sharpe",
+    "sortino_ratio": "Sortino",
+    "max_drawdown": "Max DD",
+    "cvar_95": "CVaR 95%",
+    "calmar_ratio": "Calmar",
 }
 # Lower raw value = better for these columns
 _LOWER_BETTER = {"annualized_vol", "max_drawdown", "cvar_95"}
 
 _METHOD_COLORS = {
-    "mean_variance":    "#00D4FF",
-    "risk_parity":      "#FF6B6B",
-    "cvar":             "#FFD93D",
-    "black_litterman":  "#6BCB77",
-    "equal_weight":     "#4B5563",
+    "mean_variance": "#00D4FF",
+    "risk_parity": "#FF6B6B",
+    "cvar": "#FFD93D",
+    "black_litterman": "#6BCB77",
+    "equal_weight": "#4B5563",
 }
 _METHOD_LABELS = {
-    "mean_variance":    "Mean-Variance",
-    "risk_parity":      "Risk Parity",
-    "cvar":             "CVaR",
-    "black_litterman":  "Black-Litterman",
-    "equal_weight":     "Equal Weight ⊘",
+    "mean_variance": "Mean-Variance",
+    "risk_parity": "Risk Parity",
+    "cvar": "CVaR",
+    "black_litterman": "Black-Litterman",
+    "equal_weight": "Equal Weight ⊘",
 }
 
 _COL_TOOLTIPS = {
-    "Ann. Return":  "Compound annual growth rate of net returns",
-    "Ann. Vol":     "Standard deviation of monthly returns × √12",
-    "Sharpe":       "(Return − 5% Rf) / Volatility",
-    "Sortino":      "(Return − 5% Rf) / Downside volatility",
-    "Max DD":       "Worst peak-to-trough decline",
-    "CVaR 95%":     "Average loss in the worst 5% of months",
-    "Calmar":       "Annual return / |Max drawdown|",
+    "Ann. Return": "Compound annual growth rate of net returns",
+    "Ann. Vol": "Standard deviation of monthly returns × √12",
+    "Sharpe": "(Return − 5% Rf) / Volatility",
+    "Sortino": "(Return − 5% Rf) / Downside volatility",
+    "Max DD": "Worst peak-to-trough decline",
+    "CVaR 95%": "Average loss in the worst 5% of months",
+    "Calmar": "Annual return / |Max drawdown|",
 }
 
 
@@ -92,7 +93,7 @@ def _build_header() -> str:
     for col_key, col_label in _COLS.items():
         if col_key == "method":
             continue
-        tip   = _COL_TOOLTIPS.get(col_label, "")
+        tip = _COL_TOOLTIPS.get(col_label, "")
         arrow = " ↓" if col_key in _LOWER_BETTER else ""
         cells += (
             f"<th title='{tip}' style='background:#0D1220;color:#4B5563;font-size:0.7rem;"
@@ -108,17 +109,17 @@ def _build_body(df: pd.DataFrame, num_cols: list) -> str:
     for col in num_cols:
         vals = df[col].values.astype(float)
         lower_better = col in _LOWER_BETTER
-        best_idx  = int(np.argmin(vals)) if lower_better else int(np.argmax(vals))
+        best_idx = int(np.argmin(vals)) if lower_better else int(np.argmax(vals))
         worst_idx = int(np.argmax(vals)) if lower_better else int(np.argmin(vals))
         ranks[col] = {"best": best_idx, "worst": worst_idx}
 
     rows_html = ""
     for i, (_, row) in enumerate(df.iterrows()):
-        method  = row["method"]
-        color   = _METHOD_COLORS.get(method, "#4B5563")
-        label   = _METHOD_LABELS.get(method, method.replace("_", " ").title())
+        method = row["method"]
+        color = _METHOD_COLORS.get(method, "#4B5563")
+        label = _METHOD_LABELS.get(method, method.replace("_", " ").title())
         is_bench = method == "equal_weight"
-        row_bg   = "#080C14" if i % 2 == 0 else "#0B0F1A"
+        row_bg = "#080C14" if i % 2 == 0 else "#0B0F1A"
 
         # Method cell with colour dot
         method_cell = (
@@ -133,22 +134,22 @@ def _build_body(df: pd.DataFrame, num_cols: list) -> str:
         value_cells = ""
         for j, col in enumerate(num_cols):
             raw_val = float(row[col])
-            r       = ranks[col]
-            is_best  = (j == r["best"] or i == r["best"]) and (r["best"] == i)
-            is_worst = (i == r["worst"])
+            r = ranks[col]
+            is_best = (j == r["best"] or i == r["best"]) and (r["best"] == i)
+            is_worst = i == r["worst"]
 
             if is_best:
                 val_color = "#10B981"
-                bg_extra  = "background:rgba(16,185,129,0.06);"
-                badge     = "<span style='font-size:0.6rem;margin-left:4px;color:#10B981'>▲</span>"
+                bg_extra = "background:rgba(16,185,129,0.06);"
+                badge = "<span style='font-size:0.6rem;margin-left:4px;color:#10B981'>▲</span>"
             elif is_worst:
                 val_color = "#EF4444"
-                bg_extra  = "background:rgba(239,68,68,0.06);"
-                badge     = "<span style='font-size:0.6rem;margin-left:4px;color:#EF4444'>▼</span>"
+                bg_extra = "background:rgba(239,68,68,0.06);"
+                badge = "<span style='font-size:0.6rem;margin-left:4px;color:#EF4444'>▼</span>"
             else:
                 val_color = "#9CA3AF" if is_bench else "#D1D5DB"
-                bg_extra  = ""
-                badge     = ""
+                bg_extra = ""
+                badge = ""
 
             fmt = _fmt(col, raw_val)
 

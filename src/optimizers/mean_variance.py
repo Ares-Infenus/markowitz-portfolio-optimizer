@@ -1,4 +1,5 @@
 """Mean-Variance optimizer — Markowitz QP via cvxpy."""
+
 from __future__ import annotations
 
 import cvxpy as cp

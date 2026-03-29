@@ -1,4 +1,5 @@
 """ReturnEngine and CovarianceEngine — transforms prices into features."""
+
 from __future__ import annotations
 
 from pathlib import Path

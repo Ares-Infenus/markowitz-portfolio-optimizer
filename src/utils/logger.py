@@ -1,4 +1,5 @@
 """Structured logging with daily rotation, 7-day retention."""
+
 from __future__ import annotations
 
 import logging

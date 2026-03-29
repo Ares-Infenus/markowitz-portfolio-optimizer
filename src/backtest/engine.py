@@ -1,4 +1,5 @@
 """BacktestEngine — monthly rebalance with expanding window and transaction costs."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -101,8 +102,7 @@ class BacktestEngine:
             # ── Simulate returns until next rebalance ─────────────────────
             if next_rebal_date is not None:
                 period_returns = self.returns.loc[
-                    (self.returns.index > rebal_date)
-                    & (self.returns.index <= next_rebal_date)
+                    (self.returns.index > rebal_date) & (self.returns.index <= next_rebal_date)
                 ]
             else:
                 period_returns = self.returns.loc[self.returns.index > rebal_date]
@@ -176,7 +176,9 @@ class BacktestEngine:
             existing = existing[existing["method"] != self.method_name]
             results_df_save = results_df.reset_index()
             results_df_save["method"] = self.method_name
-            combined = pd.concat([existing.reset_index(drop=True), results_df_save], ignore_index=True)
+            combined = pd.concat(
+                [existing.reset_index(drop=True), results_df_save], ignore_index=True
+            )
         else:
             combined = results_df.reset_index()
             combined["method"] = self.method_name

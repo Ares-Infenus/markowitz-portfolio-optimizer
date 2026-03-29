@@ -1,4 +1,5 @@
 """Tests for BacktestEngine — monthly rebalances, transaction costs."""
+
 from __future__ import annotations
 
 import pytest
@@ -8,7 +9,9 @@ from src.optimizers.mean_variance import MeanVarianceOptimizer
 
 
 @pytest.fixture()
-def engine(settings, synthetic_returns, synthetic_cov, synthetic_expected_returns, tmp_path, monkeypatch):
+def engine(
+    settings, synthetic_returns, synthetic_cov, synthetic_expected_returns, tmp_path, monkeypatch
+):
     # Redirect parquet output to tmp_path
     monkeypatch.setattr("src.backtest.engine.WEIGHTS_PATH", tmp_path / "weights_store.parquet")
     monkeypatch.setattr("src.backtest.engine.BACKTEST_PATH", tmp_path / "backtest_results.parquet")

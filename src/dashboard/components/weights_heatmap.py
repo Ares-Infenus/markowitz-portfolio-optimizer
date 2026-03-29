@@ -1,4 +1,5 @@
 """Portfolio weights heatmap — premium version."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,10 +12,10 @@ _WEIGHTS_PATH = Path("data/results/weights_store.parquet")
 _TICKERS = ["AAPL", "MSFT", "JPM", "GS", "JNJ", "UNH", "XOM", "NEE", "AMZN", "PG"]
 
 _METHOD_LABELS = {
-    "mean_variance":    "Mean-Variance",
-    "risk_parity":      "Risk Parity",
-    "cvar":             "CVaR",
-    "black_litterman":  "Black-Litterman",
+    "mean_variance": "Mean-Variance",
+    "risk_parity": "Risk Parity",
+    "cvar": "CVaR",
+    "black_litterman": "Black-Litterman",
 }
 
 
@@ -38,34 +39,39 @@ def render(selected: list[str]) -> None:
         label_visibility="collapsed",
     )
 
-    sub         = df[df["method"] == method].sort_values("date")
+    sub = df[df["method"] == method].sort_values("date")
     ticker_cols = [c for c in _TICKERS if c in sub.columns]
-    pivot       = sub.set_index("date")[ticker_cols].T
+    pivot = sub.set_index("date")[ticker_cols].T
     pivot.columns = [d.strftime("%b %y") for d in pivot.columns]
 
-    fig = go.Figure(go.Heatmap(
-        z=pivot.values * 100,
-        x=list(pivot.columns),
-        y=list(pivot.index),
-        colorscale=[
-            [0.00, "#080C14"],
-            [0.10, "#0A1628"],
-            [0.40, "#003D66"],
-            [0.70, "#0077CC"],
-            [1.00, "#00D4FF"],
-        ],
-        zmin=0, zmax=20,
-        colorbar=dict(
-            title=dict(text="Weight %", font=dict(size=10, color="#6B7280")),
-            ticksuffix="%",
-            tickfont=dict(size=9, color="#6B7280"),
-            thickness=10, len=0.8,
-            bgcolor="rgba(0,0,0,0)",
-            bordercolor="#1E2738",
-        ),
-        hovertemplate="<b>%{y}</b> — %{x}<br>Weight: <b>%{z:.1f}%</b><extra></extra>",
-        xgap=1, ygap=1,
-    ))
+    fig = go.Figure(
+        go.Heatmap(
+            z=pivot.values * 100,
+            x=list(pivot.columns),
+            y=list(pivot.index),
+            colorscale=[
+                [0.00, "#080C14"],
+                [0.10, "#0A1628"],
+                [0.40, "#003D66"],
+                [0.70, "#0077CC"],
+                [1.00, "#00D4FF"],
+            ],
+            zmin=0,
+            zmax=20,
+            colorbar=dict(
+                title=dict(text="Weight %", font=dict(size=10, color="#6B7280")),
+                ticksuffix="%",
+                tickfont=dict(size=9, color="#6B7280"),
+                thickness=10,
+                len=0.8,
+                bgcolor="rgba(0,0,0,0)",
+                bordercolor="#1E2738",
+            ),
+            hovertemplate="<b>%{y}</b> — %{x}<br>Weight: <b>%{z:.1f}%</b><extra></extra>",
+            xgap=1,
+            ygap=1,
+        )
+    )
 
     # Min/max weight lines
     fig.add_hline(y=-0.5, line_color="#1E2738", line_width=1)
@@ -73,12 +79,15 @@ def render(selected: list[str]) -> None:
     fig.update_layout(
         **_dark_layout(height=360),
         xaxis=dict(
-            tickangle=-45, tickfont=dict(size=9),
-            gridcolor="rgba(0,0,0,0)", zeroline=False,
+            tickangle=-45,
+            tickfont=dict(size=9),
+            gridcolor="rgba(0,0,0,0)",
+            zeroline=False,
         ),
         yaxis=dict(
             tickfont=dict(size=10),
-            gridcolor="rgba(0,0,0,0)", zeroline=False,
+            gridcolor="rgba(0,0,0,0)",
+            zeroline=False,
         ),
         margin=dict(t=10, b=10, l=10, r=60),
     )

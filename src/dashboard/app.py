@@ -1,4 +1,5 @@
 """Streamlit dashboard — premium dark theme, tabbed layout."""
+
 from __future__ import annotations
 
 import time
@@ -15,7 +16,8 @@ st.set_page_config(
 )
 
 # ── Design system ─────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <style>
 /* ── Base ── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -107,7 +109,9 @@ hr { border-color: #1E2738 !important; margin: 24px 0 !important; }
 /* ── Selectbox / slider ── */
 .stSelectbox label, .stSlider label { color: #9CA3AF !important; font-size: 0.8rem !important; }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 from src.dashboard.components import (  # noqa: E402
     allocation_chart,
@@ -120,19 +124,19 @@ from src.dashboard.components import (  # noqa: E402
 
 _METHODS = ["mean_variance", "risk_parity", "cvar", "black_litterman"]
 _METHOD_LABELS = {
-    "mean_variance":    "Mean-Variance",
-    "risk_parity":      "Risk Parity",
-    "cvar":             "CVaR",
-    "black_litterman":  "Black-Litterman",
+    "mean_variance": "Mean-Variance",
+    "risk_parity": "Risk Parity",
+    "cvar": "CVaR",
+    "black_litterman": "Black-Litterman",
 }
 _METHOD_COLORS = {
-    "mean_variance":    "#00D4FF",
-    "risk_parity":      "#FF6B6B",
-    "cvar":             "#FFD93D",
-    "black_litterman":  "#6BCB77",
+    "mean_variance": "#00D4FF",
+    "risk_parity": "#FF6B6B",
+    "cvar": "#FFD93D",
+    "black_litterman": "#6BCB77",
 }
-_PERF_PATH  = Path("data/results/performance_summary.parquet")
-_BT_PATH    = Path("data/results/backtest_results.parquet")
+_PERF_PATH = Path("data/results/performance_summary.parquet")
+_BT_PATH = Path("data/results/backtest_results.parquet")
 
 
 def main() -> None:
@@ -141,7 +145,10 @@ def main() -> None:
     # ── Sidebar ───────────────────────────────────────────────────────────
     with st.sidebar:
         st.markdown("### Portfolio Methods")
-        st.markdown("<p style='font-size:0.75rem;color:#6B7280;margin-bottom:12px'>Toggle which strategies appear in all charts</p>", unsafe_allow_html=True)
+        st.markdown(
+            "<p style='font-size:0.75rem;color:#6B7280;margin-bottom:12px'>Toggle which strategies appear in all charts</p>",
+            unsafe_allow_html=True,
+        )
 
         selected = []
         for m in _METHODS:
@@ -166,7 +173,10 @@ def main() -> None:
         st.markdown("---")
 
         # Concept legend
-        st.markdown("<p style='color:#6B7280;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em'>Method summary</p>", unsafe_allow_html=True)
+        st.markdown(
+            "<p style='color:#6B7280;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em'>Method summary</p>",
+            unsafe_allow_html=True,
+        )
         _sidebar_legend()
 
     # ── Header ────────────────────────────────────────────────────────────
@@ -208,18 +218,25 @@ def main() -> None:
     st.markdown("---")
 
     # ── Tabs ──────────────────────────────────────────────────────────────
-    tab1, tab2, tab3 = st.tabs([
-        "📊  Performance & Returns",
-        "⚖️  Risk Analysis",
-        "🥧  Portfolio Composition",
-    ])
+    tab1, tab2, tab3 = st.tabs(
+        [
+            "📊  Performance & Returns",
+            "⚖️  Risk Analysis",
+            "🥧  Portfolio Composition",
+        ]
+    )
 
     with tab1:
-        _section("Cumulative Returns", "vs equal-weight benchmark · shaded: COVID crash & 2022 bear market")
+        _section(
+            "Cumulative Returns",
+            "vs equal-weight benchmark · shaded: COVID crash & 2022 bear market",
+        )
         backtest_chart.render(selected + ["equal_weight"])
 
         st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-        _section("Strategy Performance Scorecard", "all metrics annualised · green = best · red = worst")
+        _section(
+            "Strategy Performance Scorecard", "all metrics annualised · green = best · red = worst"
+        )
         performance_table.render(selected)
 
     with tab2:
@@ -252,8 +269,13 @@ def main() -> None:
 
 # ── Helper components ─────────────────────────────────────────────────────────
 
+
 def _section(title: str, subtitle: str = "") -> None:
-    sub_html = f"<span style='color:#4B5563;font-size:0.75rem;font-weight:400'>{subtitle}</span>" if subtitle else ""
+    sub_html = (
+        f"<span style='color:#4B5563;font-size:0.75rem;font-weight:400'>{subtitle}</span>"
+        if subtitle
+        else ""
+    )
     st.markdown(
         f"<div class='section-header'>"
         f"<span class='section-title'>{title}</span>"
@@ -275,12 +297,12 @@ def _render_kpis(selected: list[str]) -> None:
     cols = st.columns(len(selected))
     for col, (_, row) in zip(cols, perf.iterrows()):
         method = row["method"]
-        color  = _METHOD_COLORS.get(method, "#AAAAAA")
-        ret    = row["annualized_return"]
+        color = _METHOD_COLORS.get(method, "#AAAAAA")
+        ret = row["annualized_return"]
         sharpe = row["sharpe_ratio"]
-        mdd    = row["max_drawdown"]
-        vol    = row["annualized_vol"]
-        mdd_cls  = "kpi-neg"
+        mdd = row["max_drawdown"]
+        vol = row["annualized_vol"]
+        mdd_cls = "kpi-neg"
 
         col.markdown(
             f"<div class='kpi-card'>"
@@ -301,10 +323,10 @@ def _render_kpis(selected: list[str]) -> None:
 
 def _sidebar_legend() -> None:
     items = [
-        ("MV",  "#00D4FF", "Maximize Sharpe via QP solver"),
-        ("RP",  "#FF6B6B", "Equal risk contribution"),
-        ("CVaR","#FFD93D", "Minimize tail loss at 95%"),
-        ("BL",  "#6BCB77", "Bayesian: prior + momentum views"),
+        ("MV", "#00D4FF", "Maximize Sharpe via QP solver"),
+        ("RP", "#FF6B6B", "Equal risk contribution"),
+        ("CVaR", "#FFD93D", "Minimize tail loss at 95%"),
+        ("BL", "#6BCB77", "Bayesian: prior + momentum views"),
     ]
     for abbr, color, desc in items:
         st.markdown(
@@ -319,6 +341,7 @@ def _sidebar_legend() -> None:
 
 def _pipeline_age() -> str:
     import datetime
+
     mtime = _BT_PATH.stat().st_mtime
     dt = datetime.datetime.fromtimestamp(mtime)
     return dt.strftime("%Y-%m-%d %H:%M")

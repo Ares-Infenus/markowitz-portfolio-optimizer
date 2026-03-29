@@ -1,4 +1,5 @@
 """Risk Profile Radar — 5-dimension spider chart comparing all strategies."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,27 +11,27 @@ import streamlit as st
 _PERF_PATH = Path("data/results/performance_summary.parquet")
 
 _METHOD_COLORS = {
-    "mean_variance":    "#00D4FF",
-    "risk_parity":      "#FF6B6B",
-    "cvar":             "#FFD93D",
-    "black_litterman":  "#6BCB77",
-    "equal_weight":     "#4B5563",
+    "mean_variance": "#00D4FF",
+    "risk_parity": "#FF6B6B",
+    "cvar": "#FFD93D",
+    "black_litterman": "#6BCB77",
+    "equal_weight": "#4B5563",
 }
 _METHOD_LABELS = {
-    "mean_variance":    "Mean-Variance",
-    "risk_parity":      "Risk Parity",
-    "cvar":             "CVaR",
-    "black_litterman":  "Black-Litterman",
-    "equal_weight":     "Equal Weight",
+    "mean_variance": "Mean-Variance",
+    "risk_parity": "Risk Parity",
+    "cvar": "CVaR",
+    "black_litterman": "Black-Litterman",
+    "equal_weight": "Equal Weight",
 }
 
 # (column, label, higher_is_better)
 _DIMENSIONS = [
-    ("sharpe_ratio",     "Sharpe",       True),
-    ("sortino_ratio",    "Sortino",      True),
-    ("calmar_ratio",     "Calmar",       True),
-    ("max_drawdown",     "Low Drawdown", False),   # inverted
-    ("cvar_95",          "Low Tail Risk",False),   # inverted
+    ("sharpe_ratio", "Sharpe", True),
+    ("sortino_ratio", "Sortino", True),
+    ("calmar_ratio", "Calmar", True),
+    ("max_drawdown", "Low Drawdown", False),  # inverted
+    ("cvar_95", "Low Tail Risk", False),  # inverted
 ]
 
 
@@ -55,7 +56,7 @@ def render(selected: list[str]) -> None:
             v = float(vals[m]) if m in vals.index else 0.0
             norm = (v - mn) / (mx - mn) if mx > mn else 0.5
             if not higher_better:
-                norm = 1.0 - norm    # invert: lower raw = higher score
+                norm = 1.0 - norm  # invert: lower raw = higher score
             scores.setdefault(m, []).append(round(norm, 4))
 
     fig = go.Figure()
@@ -78,34 +79,42 @@ def render(selected: list[str]) -> None:
 
         customdata = [[r] for r in raw_closed]
 
-        fig.add_trace(go.Scatterpolar(
-            r=vals_closed,
-            theta=categories,
-            fill="toself",
-            fillcolor=_hex_to_rgba(color, 0.08),
-            line=dict(color=color, width=2),
-            name=label,
-            customdata=customdata,
-            hovertemplate="<b>%{theta}</b><br>Score: %{r:.2f}<br>Raw: %{customdata[0]:.3f}<extra>" + label + "</extra>",
-        ))
+        fig.add_trace(
+            go.Scatterpolar(
+                r=vals_closed,
+                theta=categories,
+                fill="toself",
+                fillcolor=_hex_to_rgba(color, 0.08),
+                line=dict(color=color, width=2),
+                name=label,
+                customdata=customdata,
+                hovertemplate="<b>%{theta}</b><br>Score: %{r:.2f}<br>Raw: %{customdata[0]:.3f}<extra>"
+                + label
+                + "</extra>",
+            )
+        )
 
     # ── Equal-weight reference ─────────────────────────────────────────────
     if "equal_weight" in perf["method"].values and "equal_weight" not in methods_to_show:
         ew_vals = scores.get("equal_weight", [0.5] * len(_DIMENSIONS))
         ew_closed = ew_vals + [ew_vals[0]]
-        fig.add_trace(go.Scatterpolar(
-            r=ew_closed, theta=categories,
-            mode="lines",
-            line=dict(color="#1E2738", width=1.5, dash="dot"),
-            name="Equal Weight ⊘",
-            hoverinfo="skip",
-        ))
+        fig.add_trace(
+            go.Scatterpolar(
+                r=ew_closed,
+                theta=categories,
+                mode="lines",
+                line=dict(color="#1E2738", width=1.5, dash="dot"),
+                name="Equal Weight ⊘",
+                hoverinfo="skip",
+            )
+        )
 
     fig.update_layout(
         polar=dict(
             bgcolor="#080C14",
             radialaxis=dict(
-                visible=True, range=[0, 1],
+                visible=True,
+                range=[0, 1],
                 tickvals=[0.25, 0.5, 0.75, 1.0],
                 ticktext=["25%", "50%", "75%", "100%"],
                 tickfont=dict(size=8, color="#374151"),
@@ -122,9 +131,13 @@ def render(selected: list[str]) -> None:
         plot_bgcolor="#080C14",
         font=dict(color="#9CA3AF", family="Inter, sans-serif"),
         legend=dict(
-            x=0.5, y=-0.12, xanchor="center",
-            orientation="h", bgcolor="rgba(0,0,0,0)",
-            font=dict(size=10), itemsizing="constant",
+            x=0.5,
+            y=-0.12,
+            xanchor="center",
+            orientation="h",
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(size=10),
+            itemsizing="constant",
         ),
         height=420,
         margin=dict(t=20, b=50, l=40, r=40),

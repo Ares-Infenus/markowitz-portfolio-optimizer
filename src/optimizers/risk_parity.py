@@ -1,4 +1,5 @@
 """Risk Parity optimizer — scipy SLSQP (non-convex objective)."""
+
 from __future__ import annotations
 
 import numpy as np

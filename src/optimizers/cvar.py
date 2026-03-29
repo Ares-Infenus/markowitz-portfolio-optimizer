@@ -1,4 +1,5 @@
 """CVaR optimizer — Rockafellar-Uryasev LP via cvxpy."""
+
 from __future__ import annotations
 
 import cvxpy as cp
@@ -31,8 +32,8 @@ class CVaROptimizer(BaseOptimizer):
         T = R.shape[0]
 
         w = cp.Variable(n)
-        zeta = cp.Variable()          # VaR auxiliary
-        u = cp.Variable(T)            # exceedance variables
+        zeta = cp.Variable()  # VaR auxiliary
+        u = cp.Variable(T)  # exceedance variables
 
         cvar = zeta + (1.0 / (1.0 - self.alpha)) * (1.0 / T) * cp.sum(u)
 
@@ -56,7 +57,13 @@ class CVaROptimizer(BaseOptimizer):
         weights = pd.Series(w.value, index=tickers)
         weights = self._clip_and_renormalize(weights)
         portfolio_returns = R @ weights.values
-        cvar_val = float(np.mean(portfolio_returns[portfolio_returns < np.percentile(portfolio_returns, (1 - self.alpha) * 100)]))
+        cvar_val = float(
+            np.mean(
+                portfolio_returns[
+                    portfolio_returns < np.percentile(portfolio_returns, (1 - self.alpha) * 100)
+                ]
+            )
+        )
 
         self.logger.info(
             "CVaR optimized — CVaR(%.0f%%)=%.4f  status=%s",

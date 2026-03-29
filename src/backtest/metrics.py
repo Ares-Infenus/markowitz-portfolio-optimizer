@@ -50,14 +50,15 @@ class PerformanceAnalytics:
     def _metrics_for(self, df: pd.DataFrame) -> dict:
         returns = df["net_monthly_return"].dropna()
         rf = self.settings.risk_free_rate
+        _EPS = 1e-9
 
         ann_return = float((1 + returns.mean()) ** 12 - 1)
         ann_vol = float(returns.std() * np.sqrt(12))
-        sharpe = float((ann_return - rf) / ann_vol) if ann_vol > 0 else 0.0
+        sharpe = float((ann_return - rf) / max(ann_vol, _EPS))
 
         downside = returns[returns < 0]
         downside_vol = float(downside.std() * np.sqrt(12)) if len(downside) > 1 else ann_vol
-        sortino = float((ann_return - rf) / downside_vol) if downside_vol > 0 else 0.0
+        sortino = float((ann_return - rf) / max(downside_vol, _EPS))
 
         max_dd = self._max_drawdown(df["portfolio_value"])
 
@@ -68,7 +69,7 @@ class PerformanceAnalytics:
             else float(cvar_threshold)
         )
 
-        calmar = float(ann_return / abs(max_dd)) if max_dd != 0 else 0.0
+        calmar = float(ann_return / max(abs(max_dd), _EPS))
 
         return {
             "annualized_return": ann_return,

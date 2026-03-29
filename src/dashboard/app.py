@@ -280,7 +280,6 @@ def _render_kpis(selected: list[str]) -> None:
         sharpe = row["sharpe_ratio"]
         mdd    = row["max_drawdown"]
         vol    = row["annualized_vol"]
-        ret_cls  = "kpi-pos" if ret > 0 else "kpi-neg"
         mdd_cls  = "kpi-neg"
 
         col.markdown(

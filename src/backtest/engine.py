@@ -117,7 +117,6 @@ class BacktestEngine:
             monthly_return = float(np.exp(monthly_log_return) - 1)
             net_monthly_return = monthly_return - tx_cost
 
-            prev_value = portfolio_value
             portfolio_value *= 1 + net_monthly_return
 
             records.append(

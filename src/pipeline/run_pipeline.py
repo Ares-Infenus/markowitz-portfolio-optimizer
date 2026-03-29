@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import time
+from pathlib import Path
+
+import pandas as pd
 
 from src.backtest.engine import BacktestEngine
 from src.backtest.metrics import PerformanceAnalytics
@@ -100,9 +103,6 @@ def main() -> None:
 
 def _save_efficient_frontier(returns, cov_matrix, expected_returns, settings, logger):
     """Compute and save efficient frontier data for the dashboard."""
-    from pathlib import Path
-    import pandas as pd
-
     try:
         mv = MeanVarianceOptimizer(settings)
         frontier = mv.efficient_frontier(returns, cov_matrix, expected_returns, n_points=100)

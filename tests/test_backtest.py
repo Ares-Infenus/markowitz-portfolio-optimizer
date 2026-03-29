@@ -1,8 +1,6 @@
 """Tests for BacktestEngine — monthly rebalances, transaction costs."""
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 import pytest
 
 from src.backtest.engine import BacktestEngine

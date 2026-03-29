@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from pypfopt import BlackLittermanModel, risk_models
+from pypfopt import BlackLittermanModel
 from pypfopt.efficient_frontier import EfficientFrontier
 
 from src.optimizers.base import BaseOptimizer

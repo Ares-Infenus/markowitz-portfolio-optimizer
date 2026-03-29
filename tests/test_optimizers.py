@@ -78,8 +78,6 @@ def test_risk_parity_equal_contributions(settings, synthetic_returns, synthetic_
 
 def test_cvar_lower_tail_risk(settings, synthetic_returns, synthetic_cov, synthetic_expected_returns):
     """CVaR portfolio's realised CVaR should be ≤ equal-weight CVaR on the test set."""
-    from src.optimizers.base import BaseOptimizer
-
     cvar_opt = CVaROptimizer(settings)
     cvar_weights = cvar_opt.optimize(synthetic_returns, synthetic_cov, synthetic_expected_returns)
 

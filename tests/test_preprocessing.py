@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
-import pytest
 
 from src.data.preprocessing import CovarianceEngine, ReturnEngine
 
@@ -12,7 +10,7 @@ def test_log_returns_shape(synthetic_returns, settings):
     """Log returns should have n-1 rows relative to prices."""
     # Build fake price series from returns
     prices = np.exp(synthetic_returns.cumsum())
-    re = ReturnEngine(prices, settings)
+    ReturnEngine(prices, settings)
     # Manually compute to test the formula
     result = np.log(prices / prices.shift(1)).dropna()
     assert result.shape == (len(prices) - 1, prices.shape[1])
